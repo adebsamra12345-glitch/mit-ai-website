@@ -1,6 +1,6 @@
 import mascot from '../assets/mascot.jpg'
 
-export default function Hero() {
+export default function Hero({ onOpenConsultation }) {
   return (
     <section className="hero" id="top">
       <div className="container">
@@ -12,7 +12,13 @@ export default function Hero() {
             تتخذ قرارات أسرع.
           </p>
           <div className="hero-actions">
-            <a href="#contact" className="btn btn-primary">احجز استشارة مجانية</a>
+            <button
+              type="button"
+              onClick={onOpenConsultation}
+              className="btn btn-primary"
+            >
+              احجز استشارة مجانية
+            </button>
             <a href="#services" className="btn btn-outline">استكشف الخدمات</a>
           </div>
           <div className="hero-stats">

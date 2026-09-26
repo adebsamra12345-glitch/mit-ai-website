@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './App.css'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
@@ -8,13 +9,16 @@ import About from './components/About.jsx'
 import CTA from './components/CTA.jsx'
 import Footer from './components/Footer.jsx'
 import ChatWidget from './components/ChatWidget.jsx'
+import ConsultationModal from './components/ConsultationModal.jsx'
 
 export default function App() {
+  const [modalOpen, setModalOpen] = useState(false)
+
   return (
     <>
-      <Header />
+      <Header onOpenConsultation={() => setModalOpen(true)} />
       <main>
-        <Hero />
+        <Hero onOpenConsultation={() => setModalOpen(true)} />
         <section className="intro">
           <div className="container intro-inner">
             <p>
@@ -28,10 +32,11 @@ export default function App() {
         <Services />
         <Assistant />
         <About />
-        <CTA />
+        <CTA onOpenConsultation={() => setModalOpen(true)} />
       </main>
       <Footer />
       <ChatWidget />
+      <ConsultationModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   )
 }

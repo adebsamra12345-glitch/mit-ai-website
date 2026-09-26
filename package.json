@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend": "backend\\.venv\\Scripts\\python.exe backend\\manage.py runserver 8000",
+    "backend:test": "backend\\.venv\\Scripts\\python.exe backend\\manage.py test api",
+    "backend:migrate": "backend\\.venv\\Scripts\\python.exe backend\\manage.py migrate"
   },
   "dependencies": {
     "react": "^18.3.1",

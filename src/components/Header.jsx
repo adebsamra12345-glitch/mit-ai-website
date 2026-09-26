@@ -8,7 +8,7 @@ const links = [
   { href: '#contact', label: 'تواصل معنا' },
 ]
 
-export default function Header() {
+export default function Header({ onOpenConsultation }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -27,7 +27,13 @@ export default function Header() {
           ))}
         </nav>
 
-        <a href="#contact" className="btn btn-primary header-cta">احجز استشارة مجانية</a>
+        <button
+          type="button"
+          onClick={onOpenConsultation}
+          className="btn btn-primary header-cta"
+        >
+          احجز استشارة مجانية
+        </button>
 
         <button className="nav-toggle" onClick={() => setOpen((o) => !o)} aria-label="فتح القائمة">
           ☰

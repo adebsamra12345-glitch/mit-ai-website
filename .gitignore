@@ -2,3 +2,12 @@ node_modules
 dist
 .env
 .env.local
+
+# Python & Django
+backend/.venv/
+.venv/
+__pycache__/
+*.py[cod]
+backend/db.sqlite3
+backend/.env
+backend/.env.local
