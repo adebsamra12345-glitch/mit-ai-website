@@ -14,9 +14,6 @@
 
 ```bash
 # تشغيل خادم Django على المنفذ 8000
-npm run backend
-
-# أو مباشرة عبر بايثون:
 cd backend
 .\.venv\Scripts\python.exe manage.py runserver 8000
 ```
@@ -25,9 +22,10 @@ cd backend
 
 ### 2. تشغيل الواجهة الأمامية (Frontend)
 
-في نافذة موجه أوامر أخرى في جذر المشروع:
+في نافذة موجه أوامر أخرى:
 
 ```bash
+cd frontend
 npm run dev
 ```
 
