@@ -7,7 +7,7 @@
   <!-- Homepage — highest priority, crawled most frequently -->
   <url>
     <loc>https://mit-ai-technology.com/</loc>
-    <lastmod>2024-09-30</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -15,14 +15,14 @@
   <!-- Tier 1 — Commercial Service Pages -->
   <url>
     <loc>https://mit-ai-technology.com/services/enterprise-rag-solutions</loc>
-    <lastmod>2024-09-30</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://mit-ai-technology.com/services/llm-fine-tuning</loc>
-    <lastmod>2024-09-30</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -30,7 +30,7 @@
   <!-- Tier 2 — Commercial & Informational -->
   <url>
     <loc>https://mit-ai-technology.com/services/ai-search-api</loc>
-    <lastmod>2024-09-30</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -38,14 +38,14 @@
   <!-- Blog / Informational Content -->
   <url>
     <loc>https://mit-ai-technology.com/blog/improve-website-search-with-ai</loc>
-    <lastmod>2024-09-30</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://mit-ai-technology.com/blog/rag-vs-fine-tuning-for-enterprise</loc>
-    <lastmod>2024-09-30</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
