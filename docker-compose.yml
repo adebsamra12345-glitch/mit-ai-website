@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mit_frontend:
+    build: ./frontend
+    container_name: mit_frontend
+    restart: always
+    networks:
+      - shared_traefik_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=shared_traefik_net"
+      - "traefik.http.routers.mit_frontend.rule=Host(`mitaitechnology.tech`) || Host(`www.mitaitechnology.tech`)"
+      - "traefik.http.routers.mit_frontend.entrypoints=websecure"
+      - "traefik.http.routers.mit_frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.mit_frontend.loadbalancer.server.port=80"
+
+  mit_backend:
+    build: ./backend
+    container_name: mit_backend
+    restart: always
+    networks:
+      - shared_traefik_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=shared_traefik_net"
+      - "traefik.http.routers.mit_backend.rule= (Host(`mitaitechnology.tech`) || Host(`www.mitaitechnology.tech`)) && PathPrefix(`/api`)"
+      - "traefik.http.routers.mit_backend.entrypoints=websecure"
+      - "traefik.http.routers.mit_backend.tls.certresolver=myresolver"
+      - "traefik.http.services.mit_backend.loadbalancer.server.port=8000"
+
+networks:
+  shared_traefik_net:
+    external: true
