@@ -1,131 +1,102 @@
-import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import logo from '../assets/mit-logo.webp'
+import { services, servicePath } from '../data/services.js'
+import { useConsultation } from '../context/Consultation.jsx'
 
-const homeLinks = [
-  { href: '#services', label: 'الخدمات' },
-  { href: '#why', label: 'لماذا Mit' },
-  { href: '#about', label: 'من نحن' },
-  { href: '#assistant', label: 'المساعد الرقمي' },
-  { href: '#contact', label: 'تواصل معنا' },
+const NAV = [
+  { to: '/#services', label: 'الخدمات' },
+  { to: '/blog', label: 'المدونة' },
+  { to: '/#assistant', label: 'المساعد الرقمي' },
+  { to: '/#about', label: 'من نحن' },
 ]
 
-const servicePages = [
-  { to: '/services/enterprise-rag-solutions', label: 'Enterprise RAG Solutions' },
-  { to: '/services/llm-fine-tuning', label: 'LLM Fine-Tuning' },
-  { to: '/services/ai-search-api', label: 'AI Search API' },
-]
+export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { pathname } = useLocation()
+  const { open: openConsultation } = useConsultation()
 
-const blogPages = [
-  { to: '/blog/improve-website-search-with-ai', label: 'Improve Website Search with AI' },
-  { to: '/blog/rag-vs-fine-tuning-for-enterprise', label: 'RAG vs Fine-Tuning Guide' },
-]
+  useEffect(() => setMenuOpen(false), [pathname])
 
-export default function Header({ onOpenConsultation }) {
-  const [open, setOpen] = useState(false)
-  const [servicesOpen, setServicesOpen] = useState(false)
-  const [blogOpen, setBlogOpen] = useState(false)
-  const location = useLocation()
-  const isHome = location.pathname === '/'
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Lock page scroll while the mobile drawer is open; close on Escape.
+  useEffect(() => {
+    if (!menuOpen) return undefined
+    const onKey = (e) => e.key === 'Escape' && setMenuOpen(false)
+    document.body.classList.add('no-scroll')
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.classList.remove('no-scroll')
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
 
   return (
-    <header className="site-header">
-      <div className="container">
-        <Link to="/" className="brand" onClick={() => setOpen(false)}>
-          <div className="brand-mark">M</div>
+    <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
+      <div className="container header-inner">
+        <Link to="/" className="brand" aria-label="Mit AI Technology — الصفحة الرئيسية">
+          <img src={logo} alt="" className="brand-logo" width="40" height="35" />
           <span className="brand-name">Mit <span>AI Technology</span></span>
         </Link>
 
-        <nav className={`nav-links ${open ? 'open' : ''}`}>
-          {/* Homepage anchor links — only shown on the homepage */}
-          {isHome && homeLinks.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
-              {l.label}
-            </a>
+        <nav className="nav-desktop" aria-label="القائمة الرئيسية">
+          <div className="nav-item has-menu">
+            <Link to="/#services" className="nav-link">الخدمات <span className="caret" aria-hidden="true" /></Link>
+            <ul className="nav-menu">
+              {services.map((s) => (
+                <li key={s.slug}>
+                  <Link to={servicePath(s)} dir="ltr"><span aria-hidden="true">{s.icon}</span> {s.nav}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {NAV.filter((n) => n.label !== 'الخدمات').map((n) => (
+            <NavLink key={n.to} to={n.to} className="nav-link">{n.label}</NavLink>
           ))}
-
-          {/* Services Dropdown */}
-          <div
-            className="nav-dropdown"
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
-            style={{ position: 'relative', display: 'inline-block' }}
-          >
-            <button
-              className="nav-dropdown-trigger"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontSize: 'inherit', padding: '0.25rem 0.5rem' }}
-              onClick={() => setServicesOpen((s) => !s)}
-              aria-haspopup="true"
-              aria-expanded={servicesOpen}
-            >
-              Services ▾
-            </button>
-            {servicesOpen && (
-              <ul
-                role="menu"
-                style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#1e293b', listStyle: 'none', margin: 0, padding: '0.5rem 0', borderRadius: '0.375rem', minWidth: '220px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)', zIndex: 1000 }}
-              >
-                {servicePages.map((p) => (
-                  <li key={p.to} role="menuitem">
-                    <Link
-                      to={p.to}
-                      onClick={() => { setOpen(false); setServicesOpen(false) }}
-                      style={{ display: 'block', padding: '0.6rem 1rem', color: '#e2e8f0', textDecoration: 'none', fontSize: '0.9rem', whiteSpace: 'nowrap' }}
-                    >
-                      {p.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Blog Dropdown */}
-          <div
-            className="nav-dropdown"
-            onMouseEnter={() => setBlogOpen(true)}
-            onMouseLeave={() => setBlogOpen(false)}
-            style={{ position: 'relative', display: 'inline-block' }}
-          >
-            <button
-              className="nav-dropdown-trigger"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontSize: 'inherit', padding: '0.25rem 0.5rem' }}
-              onClick={() => setBlogOpen((b) => !b)}
-              aria-haspopup="true"
-              aria-expanded={blogOpen}
-            >
-              Blog ▾
-            </button>
-            {blogOpen && (
-              <ul
-                role="menu"
-                style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#1e293b', listStyle: 'none', margin: 0, padding: '0.5rem 0', borderRadius: '0.375rem', minWidth: '240px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)', zIndex: 1000 }}
-              >
-                {blogPages.map((p) => (
-                  <li key={p.to} role="menuitem">
-                    <Link
-                      to={p.to}
-                      onClick={() => { setOpen(false); setBlogOpen(false) }}
-                      style={{ display: 'block', padding: '0.6rem 1rem', color: '#e2e8f0', textDecoration: 'none', fontSize: '0.9rem', whiteSpace: 'nowrap' }}
-                    >
-                      {p.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
         </nav>
 
-        <button
-          type="button"
-          onClick={onOpenConsultation}
-          className="btn btn-primary header-cta"
-        >
+        <button type="button" className="btn btn-primary header-cta" onClick={openConsultation}>
           احجز استشارة مجانية
         </button>
 
-        <button className="nav-toggle" onClick={() => setOpen((o) => !o)} aria-label="فتح القائمة">
-          ☰
+        <button
+          type="button"
+          className={`nav-toggle ${menuOpen ? 'is-open' : ''}`}
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label={menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-drawer"
+        >
+          <span /><span /><span />
+        </button>
+      </div>
+
+      <div id="mobile-drawer" className={`drawer ${menuOpen ? 'is-open' : ''}`} aria-hidden={!menuOpen}>
+        <nav className="drawer-nav" aria-label="قائمة الجوال">
+          {NAV.map((n, i) => (
+            <Link key={n.to} to={n.to} style={{ '--i': i }} tabIndex={menuOpen ? 0 : -1}>{n.label}</Link>
+          ))}
+          <div className="drawer-group" style={{ '--i': NAV.length }}>
+            <span className="drawer-title">خدماتنا</span>
+            {services.map((s) => (
+              <Link key={s.slug} to={servicePath(s)} dir="ltr" tabIndex={menuOpen ? 0 : -1}>{s.icon} {s.nav}</Link>
+            ))}
+          </div>
+        </nav>
+        <button
+          type="button"
+          className="btn btn-primary drawer-cta"
+          tabIndex={menuOpen ? 0 : -1}
+          onClick={() => { setMenuOpen(false); openConsultation() }}
+        >
+          احجز استشارة مجانية
         </button>
       </div>
     </header>

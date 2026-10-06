@@ -54,35 +54,53 @@ npm run dev
 AI_PROVIDER=knowledge_base
 ```
 
-### 2. الربط مع OpenAI
+### 2. الربط مع Claude (Anthropic)
+```env
+AI_PROVIDER=anthropic
+AI_API_KEY=sk-ant-...
+# اختياري: الافتراضي claude-opus-5-5. لتكلفة أقل جرّب claude-sonnet-5-5
+AI_MODEL_NAME=
+```
+
+### 3. الربط مع OpenAI
 ```env
 AI_PROVIDER=openai
 AI_API_KEY=sk-...
 AI_MODEL_NAME=gpt-4o-mini
 ```
 
-### 3. الربط مع Groq (فائق السرعة - يدعم Qwen و Llama)
+### 4. الربط مع Groq (فائق السرعة - يدعم Qwen و Llama)
 ```env
 AI_PROVIDER=groq
 AI_API_KEY=gsk_...
 AI_MODEL_NAME=llama-3.3-70b-versatile
 ```
 
-### 4. الربط مع Google Gemini
+### 5. الربط مع Google Gemini
 ```env
 AI_PROVIDER=gemini
 AI_API_KEY=AIzaSy...
 AI_MODEL_NAME=gemini-1.5-flash
 ```
 
-### 5. الربط مع نموذج محلي (Ollama أو سيرفر Qwen 2.5 محلي)
+### 6. الربط مع نموذج محلي (Ollama) أو خادم متوافق مع OpenAI (vLLM → `AI_PROVIDER=custom` مع `AI_API_BASE`)
+#### Ollama (Ollama أو سيرفر Qwen 2.5 محلي)
 ```env
 AI_PROVIDER=ollama
 AI_API_BASE=http://localhost:11434
-AI_MODEL_NAME=qwen2.5:latest
+AI_MODEL_NAME=qwen2.5:7b
 ```
 
 > **ملاحظة أمان واستقرار:** إذا حدث انقطاع في الاتصال أو انتهى رصيد الـ API، يقوم الخادم تلقائياً بالتحويل السلس (Fallback) إلى قاعدة المعرفة الذكية لضمان استمرار خدمة زوار الموقع دون توقف.
+
+---
+
+## ✍️ المدونة والـ SEO
+
+- كل مقال ملف بيانات في `frontend/src/data/posts/` (عنوان، وصف، تصنيف، تاريخ، `body` من كتل: `p`, `h2`, `h3`, `ul`, `ol`, `code`, `callout`, `table`, `toc`) ثم يُضاف إلى `posts/index.js`.
+- `npm run build` يبني الموقع ثم **يُصيِّر كل الصفحات إلى HTML ثابت** (`scripts/prerender.mjs`) ويولّد `sitemap.xml` و`robots.txt` و`404.html` تلقائياً، فيرى جوجل المحتوى كاملاً دون تشغيل JavaScript.
+- النطاق يُضبط بالمتغير `VITE_SITE_URL` (الافتراضي `https://mitaitechnology.tech`) ويُستخدم في الروابط القانونية (canonical) وبيانات JSON-LD وخريطة الموقع.
+- بعد النشر: أرسل `sitemap.xml` في Google Search Console.
 
 ---
 
@@ -90,8 +108,7 @@ AI_MODEL_NAME=qwen2.5:latest
 
 يمكنك الدخول إلى لوحة التحكم عبر المتصفح:
 - الرابط: `http://127.0.0.1:8000/admin/`
-- اسم المستخدم: `admin`
-- كلمة المرور: `admin123456`
+- أنشئ مستخدماً إدارياً بالأمر: `python manage.py createsuperuser` (لا تستخدم كلمات مرور افتراضية في الإنتاج).
 
 من خلالها يمكنك:
 1. الاطلاع على جميع طلبات الاستشارات والتواصل وتحديث حالتها (جديد، تم التواصل، تم تحديد موعد).
