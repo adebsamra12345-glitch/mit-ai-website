@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install gunicorn
 COPY . .
 EXPOSE 8000
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mit_backend.wsgi:application"]
+CMD ["sh", "-c", "mkdir -p \"$(dirname \"${DB_PATH:-/app/db.sqlite3}\")\" && python manage.py migrate --noinput && exec gunicorn --bind 0.0.0.0:8000 --timeout 60 mit_backend.wsgi:application"]

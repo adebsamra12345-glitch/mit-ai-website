@@ -1,18 +1,21 @@
 import datetime
 import json
+import logging
 import re
 import uuid
 
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db import connection
+from django.db import DatabaseError, connection
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .ai_service import AIConfig, generate_ai_reply, HISTORY_LIMIT
 from .models import ChatMessage, ChatSession, ContactInquiry
+
+logger = logging.getLogger(__name__)
 
 MAX_MESSAGE_LENGTH = 1000
 MAX_FIELD_LENGTH = 150
@@ -95,22 +98,31 @@ def chat_view(request):
     if not SESSION_ID_RE.match(session_id):
         session_id = f"mit_{uuid.uuid4().hex[:12]}"
 
-    session, _ = ChatSession.objects.get_or_create(session_id=session_id)
-
-    # سجل الرسائل السابقة يُقرأ قبل حفظ الرسالة الحالية كي لا تتكرر في السياق
-    recent = session.messages.order_by('-created_at')[:HISTORY_LIMIT]
-    history = [{"role": m.role, "content": m.content} for m in reversed(list(recent))]
-
-    ChatMessage.objects.create(session=session, role='user', content=user_message)
+    # التخزين ثانوي: إن تعذّرت قاعدة البيانات يستمر المساعد بالرد (بدون سجل محادثة)
+    session, history = None, []
+    try:
+        session, _ = ChatSession.objects.get_or_create(session_id=session_id)
+        # السجل يُقرأ قبل حفظ الرسالة الحالية كي لا تتكرر في السياق
+        recent = session.messages.order_by('-created_at')[:HISTORY_LIMIT]
+        history = [{"role": m.role, "content": m.content} for m in reversed(list(recent))]
+        ChatMessage.objects.create(session=session, role='user', content=user_message)
+    except DatabaseError:
+        logger.exception("Chat storage unavailable; replying without history")
+        session = None
 
     try:
         reply, provider = generate_ai_reply(user_message, session_id=session_id, history_messages=history)
     except Exception:
+        logger.exception("Reply generation failed")
         reply, provider = FALLBACK_REPLY, 'error_fallback'
 
-    ChatMessage.objects.create(session=session, role='assistant', content=reply, provider=provider)
+    if session is not None:
+        try:
+            ChatMessage.objects.create(session=session, role='assistant', content=reply, provider=provider)
+        except DatabaseError:
+            logger.exception("Could not store assistant reply")
 
-    return api_response({"reply": reply, "sessionId": session.session_id, "provider": provider})
+    return api_response({"reply": reply, "sessionId": session_id, "provider": provider})
 
 
 @csrf_exempt
