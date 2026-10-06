@@ -69,6 +69,7 @@ class KnowledgeBaseTests(TestCase):
         self.assertIn('0993448083', smart_knowledge_base_reply('ما رقم الهاتف؟'))
         self.assertIn('/blog', smart_knowledge_base_reply('عندكم مقالات؟'))
         self.assertIn('التكلفة', smart_knowledge_base_reply('كم السعر'))
+        self.assertIn('Custom AI', smart_knowledge_base_reply('هل تدربون نماذج على بياناتنا؟'))
 
     def test_latin_patterns_need_word_boundaries(self):
         # "rag" inside "storage" and "data" inside "database" must not trigger service intents
