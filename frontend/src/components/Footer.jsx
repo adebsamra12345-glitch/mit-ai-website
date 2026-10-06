@@ -1,53 +1,52 @@
 import { Link } from 'react-router-dom'
+import logo from '../assets/mit-logo.webp'
+import { CONTACT } from '../config.js'
+import { services, servicePath } from '../data/services.js'
+import { posts, postPath } from '../data/posts/index.js'
 
 export default function Footer() {
   return (
     <footer id="contact" className="site-footer">
       <div className="container">
         <div className="footer-grid">
-
-          {/* Brand Column */}
           <div className="footer-brand">
-            <div className="brand">
-              <div className="brand-mark">M</div>
+            <Link to="/" className="brand">
+              <img src={logo} alt="" className="brand-logo" width="40" height="35" />
               <span className="brand-name">Mit AI Technology</span>
-            </div>
+            </Link>
             <p>شركة التحول الذكي للأنظمة — نحوّل التقنيات المعقدة إلى حلول عملية لأعمالك.</p>
           </div>
 
-          {/* Quick Links (homepage anchors) */}
-          <div className="footer-col">
+          <nav className="footer-col" aria-label="روابط سريعة">
             <span className="title">روابط سريعة</span>
-            <a href="/#services">الخدمات</a>
-            <a href="/#about">من نحن</a>
-            <a href="/#assistant">المساعد الرقمي</a>
-          </div>
+            <Link to="/#services">الخدمات</Link>
+            <Link to="/blog">المدونة</Link>
+            <Link to="/#about">من نحن</Link>
+            <Link to="/#assistant">المساعد الرقمي</Link>
+          </nav>
 
-          {/* Services Column — key for internal linking */}
-          <div className="footer-col">
-            <span className="title">Services</span>
-            <Link to="/services/enterprise-rag-solutions">Enterprise RAG Solutions</Link>
-            <Link to="/services/llm-fine-tuning">LLM Fine-Tuning</Link>
-            <Link to="/services/ai-search-api">AI Search API</Link>
-          </div>
+          <nav className="footer-col" aria-label="الخدمات">
+            <span className="title">الخدمات</span>
+            {services.map((s) => (
+              <Link key={s.slug} to={servicePath(s)} dir="ltr">{s.nav}</Link>
+            ))}
+          </nav>
 
-          {/* Blog Column — drives PageRank to informational content */}
-          <div className="footer-col">
-            <span className="title">Blog</span>
-            <Link to="/blog/improve-website-search-with-ai">Improve Search with AI</Link>
-            <Link to="/blog/rag-vs-fine-tuning-for-enterprise">RAG vs Fine-Tuning</Link>
-          </div>
+          <nav className="footer-col" aria-label="أحدث المقالات">
+            <span className="title">أحدث المقالات</span>
+            {posts.slice(0, 4).map((p) => (
+              <Link key={p.slug} to={postPath(p)} dir={p.lang === 'ar' ? 'rtl' : 'ltr'} className="footer-post">{p.title}</Link>
+            ))}
+          </nav>
 
-          {/* Contact Column */}
           <div className="footer-col">
             <span className="title">تواصل معنا</span>
-            <a href="mailto:mmitaitechnoloy@gmail.com">mmitaitechnoloy@gmail.com</a>
-            <a href="tel:0993448083">0993448083</a>
+            <a href={`mailto:${CONTACT.email}`} dir="ltr">{CONTACT.email}</a>
+            <a href={`tel:${CONTACT.phone}`} dir="ltr">{CONTACT.phone}</a>
           </div>
-
         </div>
 
-        <div className="footer-bottom">© 2026 Mit AI Technology. جميع الحقوق محفوظة.</div>
+        <div className="footer-bottom">© {new Date().getFullYear()} Mit AI Technology. جميع الحقوق محفوظة.</div>
       </div>
     </footer>
   )

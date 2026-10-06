@@ -1,11 +1,11 @@
 {
   "name": "mit-ai-website",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-server && node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

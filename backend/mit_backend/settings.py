@@ -16,7 +16,7 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-mit-ai-key-change-in-prod')
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-allowed_hosts_raw = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+allowed_hosts_raw = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,mitaitechnology.tech,www.mitaitechnology.tech')
 ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_raw.split(',') if h.strip()]
 
 # Application definition

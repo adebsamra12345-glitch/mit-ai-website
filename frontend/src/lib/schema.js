@@ -4,10 +4,10 @@
  * Google uses these to generate rich results in SERPs.
  */
 
-const SITE_URL = 'https://mit-ai-technology.com'
-const ORG_NAME = 'Mit AI Technology'
-const ORG_EMAIL = 'mmitaitechnoloy@gmail.com'
-const ORG_PHONE = '+9630993448083'
+import { SITE_URL, SITE_NAME as ORG_NAME, CONTACT } from '../config.js'
+
+const ORG_EMAIL = CONTACT.email
+const ORG_PHONE = CONTACT.phoneIntl
 
 /** Organization schema — injected on the homepage */
 export const organizationSchema = {
@@ -23,22 +23,17 @@ export const organizationSchema = {
     email: ORG_EMAIL,
     availableLanguage: ['Arabic', 'English'],
   },
-  sameAs: [],
-  description:
+    description:
     'Mit AI Technology provides enterprise RAG solutions, LLM fine-tuning services, and AI-powered search APIs for B2B SaaS companies.',
 }
 
-/** WebSite schema — enables Google Sitelinks Search Box */
+/** WebSite schema */
 export const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: ORG_NAME,
   url: SITE_URL,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${SITE_URL}/search?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
+  inLanguage: ['ar', 'en'],
 }
 
 /**
@@ -81,13 +76,16 @@ export function faqSchema(faqs) {
  * Article schema factory — for blog posts.
  * @param {object} opts
  */
-export function articleSchema({ headline, description, url, datePublished, dateModified }) {
+export function articleSchema({ headline, description, url, datePublished, dateModified, inLanguage = 'en', image = `${SITE_URL}/og-image.png`, keywords = [] }) {
   return {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
     headline,
     description,
     url: `${SITE_URL}${url}`,
+    inLanguage,
+    image,
+    keywords: keywords.join(', '),
     datePublished,
     dateModified: dateModified || datePublished,
     author: {
@@ -123,17 +121,28 @@ export function softwareSchema({ name, description, url, category }) {
     url: `${SITE_URL}${url}`,
     applicationCategory: category,
     operatingSystem: 'Web',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-      description: 'Contact us for enterprise pricing.',
-    },
     provider: {
       '@type': 'Organization',
       name: ORG_NAME,
       url: SITE_URL,
     },
+  }
+}
+
+/** Blog index — lists posts so crawlers understand the collection. */
+export function blogSchema(posts) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: `${ORG_NAME} Blog`,
+    url: `${SITE_URL}/blog`,
+    publisher: { '@type': 'Organization', name: ORG_NAME, url: SITE_URL },
+    blogPost: posts.map((p) => ({
+      '@type': 'BlogPosting',
+      headline: p.title,
+      url: `${SITE_URL}/blog/${p.slug}`,
+      datePublished: p.date,
+    })),
   }
 }
 
