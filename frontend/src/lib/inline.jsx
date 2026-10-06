@@ -10,7 +10,7 @@ export function renderInline(text) {
     if (part.startsWith('[')) {
       const [, label, href] = part.match(/\[([^\]]+)\]\(([^)]+)\)/)
       return href.startsWith('/')
-        ? <Link key={i} to={href}>{label}</Link>
+        ? <Link key={i} to={href} {...(label.startsWith('/') && { dir: 'ltr', style: { display: 'inline-block' } })}>{label}</Link>
         : <a key={i} href={href} rel="noopener noreferrer" target="_blank">{label}</a>
     }
     if (part.startsWith('*') && part.length > 2) return <em key={i}>{part.slice(1, -1)}</em>

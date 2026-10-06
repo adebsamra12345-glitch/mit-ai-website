@@ -84,3 +84,4 @@
   .form-grid { grid-template-columns: 1fr 1fr; }
   .modal-actions { flex-direction: row; justify-content: flex-end; }
 }
+.chat-msg a { color: var(--cyan-500); font-weight: 700; text-decoration: underline; }

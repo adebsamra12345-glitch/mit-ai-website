@@ -10,10 +10,13 @@ const MAX_LENGTH = 1000
 let nextId = 1
 const makeMessage = (role, text) => ({ id: nextId++, role, text })
 
+/** Turns bare site paths like "/blog/xyz" into internal links. */
+const linkifyPaths = (line) => line.replace(/(^|\s)(\/blog[\w/-]*)/g, '$1[$2]($2)')
+
 /** Renders reply text: line breaks, "• " bullets and **bold** (the backend replies in this light markup). */
 function MessageText({ text }) {
   return text.split('\n').map((line, i) => (
-    <span className="chat-line" key={i}>{renderInline(line)}</span>
+    <span className="chat-line" key={i}>{renderInline(linkifyPaths(line))}</span>
   ))
 }
 
