@@ -47,6 +47,14 @@ class ApiEndpointsTests(TestCase):
         self.assertEqual(data['sessionId'], 'test-session-123')
         self.assertEqual(ChatMessage.objects.filter(session__session_id='test-session-123').count(), 2)
 
+    def test_chat_still_replies_when_storage_fails(self):
+        from django.db import DatabaseError
+        with patch('api.views.ChatSession.objects.get_or_create', side_effect=DatabaseError('no such table')):
+            response = post_json(self.client, '/api/chat/', {'message': 'مرحبا', 'sessionId': 'abc'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sessionId'], 'abc')
+        self.assertTrue(response.json()['reply'])
+
     def test_chat_rejects_bad_input(self):
         self.assertEqual(self.client.post('/api/chat/', data='not json', content_type='application/json').status_code, 400)
         self.assertEqual(post_json(self.client, '/api/chat/', ['list']).status_code, 400)
