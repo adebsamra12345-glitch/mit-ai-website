@@ -34,6 +34,19 @@ services:
       - "traefik.http.routers.mit_backend.entrypoints=websecure"
       - "traefik.http.routers.mit_backend.tls.certresolver=myresolver"
       - "traefik.http.services.mit_backend.loadbalancer.server.port=8000"
+      # Admin panel (/admin) with a login rate limit, and its static files (/django-static)
+      - "traefik.http.middlewares.mit_admin_rl.ratelimit.average=20"
+      - "traefik.http.middlewares.mit_admin_rl.ratelimit.period=1m"
+      - "traefik.http.middlewares.mit_admin_rl.ratelimit.burst=30"
+      - "traefik.http.routers.mit_admin.rule=(Host(`mitaitechnology.tech`) || Host(`www.mitaitechnology.tech`)) && PathPrefix(`/admin`)"
+      - "traefik.http.routers.mit_admin.entrypoints=websecure"
+      - "traefik.http.routers.mit_admin.tls.certresolver=myresolver"
+      - "traefik.http.routers.mit_admin.middlewares=mit_admin_rl"
+      - "traefik.http.routers.mit_admin.service=mit_backend"
+      - "traefik.http.routers.mit_static.rule=(Host(`mitaitechnology.tech`) || Host(`www.mitaitechnology.tech`)) && PathPrefix(`/django-static`)"
+      - "traefik.http.routers.mit_static.entrypoints=websecure"
+      - "traefik.http.routers.mit_static.tls.certresolver=myresolver"
+      - "traefik.http.routers.mit_static.service=mit_backend"
 
 networks:
   shared_traefik_net:
